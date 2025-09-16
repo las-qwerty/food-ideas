@@ -41,3 +41,27 @@ app.post("/food-ideas", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+// DELETE
+app.delete("/food-ideas/:id", (req, res) => {
+  const id = req.params.id;
+  let ideas = readData();
+  const initialLength = ideas.length;
+  ideas = ideas.filter((idea) => String(idea.id) !== String(id));
+  if (ideas.length === initialLength) {
+    return res.status(404).json({ error: "Not found" });
+  }
+  writeData(ideas);
+  res.json({ success: true });
+});
+
+// PUT (update)
+app.put("/food-ideas/:id", (req, res) => {
+  const id = Number(req.params.id);
+  let ideas = readData();
+  ideas = ideas.map((idea) =>
+    idea.id === id ? { ...idea, ...req.body } : idea
+  );
+  writeData(ideas);
+  res.json({ success: true });
+});
